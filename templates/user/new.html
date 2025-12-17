@@ -1,0 +1,128 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="product-page py-4">
+  <div class="container">
+    <!-- Back Button -->
+    <a href="#" class="back-btn text-decoration-none mb-3 d-inline-block">
+      <i class="bi bi-arrow-left"></i> Back
+    </a>
+
+    <div class="row g-5 align-items-start">
+      <!-- Left: Image Gallery -->
+      <div class="col-lg-6 col-md-6">
+        <div class="product-gallery">
+          <!-- Main Image -->
+          <div class="main-image-container mb-4">
+            <img id="mainProductImage" src="{{ get.image.url }}" alt="{{ get.name }}" class="img-fluid rounded shadow-sm w-100" style="object-fit: cover; height: 400px;">
+          </div>
+
+          <!-- Thumbnails -->
+          <div class="thumbnail-container d-flex gap-2 flex-wrap">
+            <img src="https://images.unsplash.com/photo-1586201375761-83865001e31c?auto=format&fit=crop&w=200&q=80"
+              class="thumbnail active rounded border" data-image="https://images.unsplash.com/photo-1586201375761-83865001e31c?auto=format&fit=crop&w=1000&q=80">
+            <img src="https://images.unsplash.com/photo-1595278069441-2cf29f8005a4?auto=format&fit=crop&w=200&q=80"
+              class="thumbnail rounded border" data-image="https://images.unsplash.com/photo-1595278069441-2cf29f8005a4?auto=format&fit=crop&w=1000&q=80">
+            <img src="https://images.unsplash.com/photo-1563729784474-d77dbb933a9e?auto=format&fit=crop&w=200&q=80"
+              class="thumbnail rounded border" data-image="https://images.unsplash.com/photo-1563729784474-d77dbb933a9e?auto=format&fit=crop&w=1000&q=80">
+            <img src="https://images.unsplash.com/photo-1523921933627-00a4c4439c22?auto=format&fit=crop&w=200&q=80"
+              class="thumbnail rounded border" data-image="https://images.unsplash.com/photo-1523921933627-00a4c4439c22?auto=format&fit=crop&w=1000&q=80">
+          </div>
+        </div>
+      </div>
+
+      <!-- Right: Product Details -->
+      <div class="col-lg-6 col-md-6">
+
+        <!-- Stock Status -->
+        <div class="d-flex align-items-center mt-2 mb-3">
+          {% if get.stock > 0 %}
+          <span class="badge bg-success d-flex align-items-center p-2 fs-6 shadow-sm">
+            <i class="bi bi-check-circle-fill me-2"></i> In Stock
+          </span>
+          {% else %}
+          <span class="badge bg-danger d-flex align-items-center p-2 fs-6 shadow-sm">
+            <i class="bi bi-x-circle-fill me-2"></i> Out of Stock
+          </span>
+          {% endif %}
+        </div>
+
+        <!-- Product Title & Description -->
+        <h1 class="product-title mb-2">{{ get.name }}</h1>
+        <p class="text-muted mb-3">{{ get.description }}</p>
+
+        <!-- Rating -->
+        <div class="rating-container mb-3">
+          <div class="rating-stars text-warning">
+            <i class="bi bi-star-fill"></i>
+            <i class="bi bi-star-fill"></i>
+            <i class="bi bi-star-fill"></i>
+            <i class="bi bi-star-fill"></i>
+            <i class="bi bi-star-half"></i>
+          </div>
+          <span class="rating-text text-muted small">4.5 (128 reviews)</span>
+        </div>
+
+        <!-- Pricing -->
+        <div class="pricing-container mb-3">
+          <div class="d-flex align-items-baseline flex-wrap gap-2">
+            <span class="current-price fs-3 fw-bold text-success">₹{{ get.price }}</span>
+            <span class="old-price text-muted text-decoration-line-through">₹{{ get.price|add:"200" }}</span>
+            <span class="discount-badge badge bg-warning text-dark">Save 25%</span>
+          </div>
+          <p class="small text-muted mt-1">Inclusive of all taxes | Free shipping on orders above ₹499</p>
+        </div>
+
+        <!-- Variants -->
+        <div class="variant-section mb-4">
+          <h5 class="variant-label">Select Size / Weight</h5>
+          <div class="variant-options d-flex flex-wrap gap-2">
+            <button class="variant-btn btn btn-outline-success active" data-price="299" data-id="variant1">250g - ₹299</button>
+            <button class="variant-btn btn btn-outline-success" data-price="599" data-id="variant2">500g - ₹599</button>
+            <button class="variant-btn btn btn-outline-success" data-price="1099" data-id="variant3">1kg - ₹1099</button>
+            <button class="variant-btn btn btn-outline-success" data-price="1999" data-id="variant4">2kg - ₹1999</button>
+          </div>
+        </div>
+
+        <!-- Quantity -->
+        <div class="quantity-container mb-4">
+          <h5>Quantity:</h5>
+          <div class="quantity-selector d-flex align-items-center gap-2">
+            <button class="quantity-btn btn btn-outline-secondary" id="decrementQty">-</button>
+            <input type="number" class="form-control text-center" id="productQty" value="1" min="1" max="10" style="width:70px;">
+            <button class="quantity-btn btn btn-outline-secondary" id="incrementQty">+</button>
+          </div>
+          <small class="text-muted">Max 10 units per order</small>
+        </div>
+
+        <!-- Buttons -->
+        <div class="action-buttons d-flex gap-3 mb-4">
+          <button class="btn btn-success flex-grow-1" id="buyNowBtn">
+            <i class="bi bi-lightning-fill"></i> BUY NOW
+          </button>
+          <button class="btn btn-outline-success flex-grow-1" id="addToCartBtn">
+            <i class="bi bi-cart-plus"></i> ADD TO CART
+          </button>
+        </div>
+
+        <!-- Key Features -->
+        <div class="mb-4">
+          <h5 class="mb-3">Key Features</h5>
+          <ul class="list-unstyled">
+            <li><i class="bi bi-check-circle text-success me-2"></i>100% Natural & Organic</li>
+            <li><i class="bi bi-check-circle text-success me-2"></i>Handpicked California Almonds</li>
+            <li><i class="bi bi-check-circle text-success me-2"></i>Rich in Vitamin E & Protein</li>
+            <li><i class="bi bi-check-circle text-success me-2"></i>Vacuum Packed for Freshness</li>
+            <li><i class="bi bi-check-circle text-success me-2"></i>Certified Quality Standards</li>
+          </ul>
+        </div>
+
+      </div> <!-- ✅ Properly closed col-lg-6 -->
+    </div> <!-- ✅ Properly closed row -->
+
+    <!-- Related Products (Keep your original structure here) -->
+    ...
+  </div>
+</div>
+
+{% endblock %}

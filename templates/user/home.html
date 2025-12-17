@@ -1,0 +1,637 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+  <!-- 🔺 Poster -->
+  <div>
+    <img src="{% static 'images/poster.png' %}" alt="Poster" class="w-100">
+  </div>
+
+  
+  <div class="container py-5 mt-lg-5">
+    <h2 class="text-center fw-bold mb-5 display-6 text-dark">Shop by Category</h2>
+  
+    <div class="carousel-wrapper position-relative">
+      <!-- Left Arrow -->
+      <button class="scroll-btn left-btn shadow"><i class="fa-solid fa-chevron-left"></i></button>
+  
+      <!-- Carousel -->
+      <div class="category-carousel d-flex overflow-auto py-3">
+        {% for i in category %}
+          <a href="{% url 'shop:product' i.id %}" class="text-decoration-none">
+            <div class="category-item flex-shrink-0 me-4 text-center rounded-4 overflow-hidden shadow-sm position-relative">
+              <div class="image-wrapper">
+                <img src="{{ i.image.url }}" alt="{{ i.name }}" class="category-img">
+                <div class="category-overlay "></div>
+                <div class="category-name position-absolute bottom-0 start-0 end-0 py-2 fw-semibold text-white text-uppercase">
+                  {{ i.name }}
+                </div>
+              </div>
+            </div>
+          </a>
+        {% endfor %}
+      </div>
+<style>
+      
+  .category-carousel {
+    scroll-behavior: smooth;
+  }
+  
+  .category-item {
+    width: 180px;
+    height: 180px;
+    position: relative;
+    transition: transform 0.4s ease, box-shadow 0.4s ease;
+    background:rgb(255, 255, 255);
+  }
+  
+  .category-item:hover {
+    transform: scale(1.05);
+    box-shadow: 0 6px 15px rgb(255, 255, 255);
+  }
+  
+  .image-wrapper {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    border-radius: 16px;
+    
+  }
+  
+  .category-img {
+    width: 100%;
+    height: 100%;
+    
+    transition: transform 0.6s ease;
+  }
+  
+  .category-item:hover .category-img {
+    transform: scale(1.1);
+  }
+  
+  .category-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    
+  }
+  
+  .category-name {
+    font-size: 1rem;
+    letter-spacing: 0.5px;
+    background: rgba(0, 0, 0, 0.4);
+    backdrop-filter: blur(4px);
+  }
+  
+</style>      
+      <!-- Right Arrow -->
+      <button class="scroll-btn right-btn shadow"><i class="fa-solid fa-chevron-right"></i></button>
+    </div>
+  </div>
+  <video autoplay muted loop class="w-100 mt-5">
+    <source src="{% static 'video/rippivideo.mp4' %}" type="video/mp4">
+  </video>
+  
+
+
+
+
+
+
+
+  <!-- ==============================
+     FLASH SALE SECTION
+=============================== -->
+<section class="flash-sale-section py-5 mt-5">
+  <div class="container">
+    <div class="section-title mb-5 text-center">
+      <h2>
+        <span class="sale-highlight">50%</span>
+        <span class="sale-text">SALE PRODUCTS</span>
+      </h2>
+    </div>
+  
+
+
+<style>
+  .section-title h2 {
+    font-size: 2.4rem;
+    font-weight: 700;
+    color: #222;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+  }
+  
+  /* Blue for 50% */
+  .sale-highlight {
+    font-size: 3.5rem;
+    font-weight: 900;
+    color: #4dabf7; /* light blue */
+    display: inline-block;
+    margin-right: 8px;
+    text-shadow: 0 2px 8px rgba(77, 171, 247, 0.3);
+    vertical-align: middle;
+  }
+  
+  /* Light green for SALE PRODUCTS */
+  .sale-text {
+    color: #2ecc71; /* light green */
+    font-weight: 800;
+    text-shadow: 0 2px 6px rgba(46, 204, 113, 0.25);
+    letter-spacing: 2px;
+  }
+  
+  
+</style>    
+
+    <div class="row g-4">
+      {% for i in product %}
+      <div class="col-lg-6 col-md-6">
+        <div class="sale-product-card">
+          <div class="ribbon">HOT</div>
+          <div class="sale-badge-product">50% OFF</div>
+          <div class="product-image">
+            <img src="{{ i.image.url }}" alt="{{ i.name }}">
+            <div class="product-stock">
+              {% if i.stock > 10 %}
+                <span class="stock-available">
+                  <i class="bi bi-check-circle-fill me-1"></i> In Stock ({{ i.stock }})
+                </span>
+              {% elif i.stock > 0 %}
+                <span class="stock-low">
+                  <i class="bi bi-exclamation-triangle-fill me-1"></i> Only {{ i.stock }} left!
+                </span>
+              {% else %}
+                <span class="stock-out">
+                  <i class="bi bi-x-circle-fill me-1"></i> Out of Stock
+                </span>
+              {% endif %}
+            </div>
+            
+          </div>
+
+          <div class="product-info">
+            <div class="product-category">{{ i.category.name }}</div>
+            <h3 class="product-title">{{ i.name }}</h3>
+
+            {% load custom_filters %}
+
+<div class="product-price">
+  <span class="current-price">₹{{ i.price|div:2 }}</span>
+  <span class="original-price text-muted text-decoration-line-through">₹{{ i.price }}</span>
+  <span class="discount-percent text-success fw-bold">50% OFF</span>
+</div>
+
+            
+
+            <div class="product-rating">
+              <div class="rating-stars">
+                <i class="bi bi-star-fill"></i>
+                <i class="bi bi-star-fill"></i>
+                <i class="bi bi-star-fill"></i>
+                <i class="bi bi-star-fill"></i>
+                <i class="bi bi-star-half"></i>
+              </div>
+              <span class="rating-count">(1,284)</span>
+            </div>
+          <a href="{% url 'shop:get_product_details2' i.id%}">
+            <button class="sale-btn w-100 mt-5">
+                <i class="bi bi-cart-plus me-2" href=""></i>Add 
+            </button> 
+          </a>
+          </div>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+<!-- ==============================
+     SALE STATS SECTION
+=============================== -->
+
+
+<style>
+/* ==============================
+   FLASH SALE - GREEN THEME
+=============================== */
+:root {
+  --green-primary: #2ecc71;
+  --green-dark: #1e7e34;
+  --green-light: #a3e4b9;
+  --gold: #ffc107;
+  --black: #1e1e1e;
+  --gray: #6c757d;
+  --white: #ffffff;
+  --bg:rgb(255, 255, 255);
+}
+
+body {
+  background: var(--bg);
+  font-family: "Poppins", sans-serif;
+}
+
+/* Section Title */
+.section-title {
+  text-align: center;
+  margin-bottom: 50px;
+  position: relative;
+}
+
+.section-title h2 {
+  font-size: 2.5rem;
+  font-weight: 800;
+  color: var(--black);
+  display: inline-block;
+  padding: 0 20px;
+  background: var(--white);
+  position: relative;
+  z-index: 1;
+  letter-spacing: 1px;
+}
+
+.section-title::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, var(--green-primary), var(--green-dark));
+  z-index: 0;
+}
+
+/* Product Card */
+.sale-product-card {
+  background: var(--white);
+  border-radius: 20px;
+  overflow: hidden;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
+  transition: all 0.3s ease;
+  border: 1px solid transparent;
+  position: relative;
+}
+
+.sale-product-card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 18px 35px rgba(46, 204, 113, 0.15);
+  border-color: var(--green-primary);
+}
+
+/* Badges */
+.sale-badge-product {
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  background: linear-gradient(45deg, var(--green-primary), var(--green-dark));
+  color: var(--white);
+  padding: 8px 18px;
+  border-radius: 20px;
+  font-weight: 700;
+  font-size: 0.9rem;
+  z-index: 2;
+  box-shadow: 0 4px 10px rgba(46, 204, 113, 0.25);
+}
+
+.ribbon {
+  position: absolute;
+  top: -10px;
+  right: -10px;
+  background: var(--gold);
+  color: var(--black);
+  padding: 10px 20px;
+  font-weight: 700;
+  font-size: 0.9rem;
+  transform: rotate(45deg);
+  box-shadow: 0 4px 10px rgba(255, 193, 7, 0.3);
+}
+
+/* Product Image */
+.product-image {
+  width: 100%;
+  height: 250px; /* fixed height for uniformity */
+  overflow: hidden;
+  position: relative;
+  border-bottom: 1px solid #eee;
+  background:rgb(255, 255, 255);
+  display: flex;               /* enable flexbox */
+  align-items: center;         /* vertical center */
+  justify-content: center;     /* horizontal center */
+}
+
+.product-image img {
+  width: auto;                 /* auto width keeps aspect ratio */
+  height: 100%;                /* fills height */
+  object-fit: cover;
+  margin-top: 15px;
+  object-position: center;
+  transition: transform 0.5s ease, filter 0.4s ease;
+}
+
+.sale-product-card:hover .product-image img {
+  transform: scale(1.05);
+  filter: brightness(1.05);
+}
+
+.product-stock {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  background: rgba(33, 37, 41, 0.75);
+  color: var(--white);
+  padding: 5px 15px;
+  border-radius: 15px;
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
+/* Product Info */
+.product-info {
+  padding: 25px;
+  text-align: center;
+}
+
+.product-category {
+  color: var(--green-dark);
+  font-size: 0.85rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: 8px;
+}
+
+.product-title {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--black);
+  margin-bottom: 15px;
+  line-height: 1.4;
+}
+
+/* Price */
+.product-price {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  margin-bottom: 15px;
+}
+
+.current-price {
+  font-size: 1.6rem;
+  font-weight: 800;
+  color: var(--green-primary);
+}
+
+.original-price {
+  font-size: 1.1rem;
+  color: #999;
+  text-decoration: line-through;
+}
+
+.discount-percent {
+  background: var(--green-primary);
+  color: var(--white);
+  padding: 4px 8px;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 0.8rem;
+}
+
+/* Rating */
+.product-rating {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  margin-bottom: 15px;
+}
+
+.rating-stars {
+  color: var(--gold);
+  font-size: 1rem;
+}
+
+.rating-count {
+  color: var(--gray);
+  font-size: 0.9rem;
+}
+
+/* Button */
+.sale-btn {
+  background: linear-gradient(45deg, var(--green-primary), var(--green-dark));
+  color: var(--white);
+  padding: 12px 20px;
+  border: none;
+  border-radius: 30px;
+  font-size: 1rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  transition: all 0.3s ease;
+}
+
+.sale-btn:hover {
+  background: linear-gradient(45deg, var(--green-dark), var(--green-primary));
+  transform: translateY(-3px);
+  box-shadow: 0 10px 25px rgba(40, 167, 69, 0.4);
+}
+
+/* ==============================
+   SALE STATS SECTION
+=============================== */
+.sale-stats {
+  background: linear-gradient(135deg, var(--green-primary), var(--green-dark));
+  color: var(--white);
+  padding: 60px 0;
+  text-align: center;
+}
+
+.stat-item {
+  padding: 20px;
+  transition: transform 0.3s ease;
+}
+
+.stat-item:hover {
+  transform: translateY(-5px);
+}
+
+.stat-number {
+  font-size: 2.5rem;
+  font-weight: 800;
+  margin-bottom: 10px;
+  color: var(--gold);
+}
+
+.stat-label {
+  font-size: 1rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .section-title h2 {
+    font-size: 2rem;
+  }
+
+  .product-title {
+    font-size: 1rem;
+  }
+
+  .current-price {
+    font-size: 1.4rem;
+  }
+
+  .product-image {
+    height: 200px;
+  }
+}
+</style>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <!-- 🌿 Styles -->
+  <style>
+    .carousel-wrapper {
+      position: relative;
+    }
+  
+    .category-carousel {
+      scroll-behavior: smooth;
+      scrollbar-width: none;
+      padding-bottom: 10px;
+    }
+  
+    .category-carousel::-webkit-scrollbar {
+      display: none;
+    }
+  
+    .category-item {
+      width: 200px;
+    }
+  
+    .image-card {
+      position: relative;
+      background: #fff;
+      border-radius: 1rem;
+      box-shadow: 0 4px 15px rgba(0, 50, 0, 0.15);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      cursor: pointer;
+    }
+  
+    .zoom-card:hover {
+      transform: scale(1.05);
+      box-shadow: 0 8px 25px rgba(0, 100, 0, 0.3);
+    }
+  
+    .category-img {
+      width: 100%;
+      height: 180px;
+      object-fit: cover;
+      border-radius: 1rem 1rem 0 0;
+    }
+  
+    .category-name {
+      background: linear-gradient(135deg, #0b6623, #2e8b57);
+      border-radius: 0 0 1rem 1rem;
+      transition: background 0.3s ease, box-shadow 0.3s ease;
+    }
+  
+    .image-card:hover .category-name {
+      background: linear-gradient(135deg, #004d1a, #006b38);
+      box-shadow: 0 0 12px rgba(0, 100, 0, 0.5);
+    }
+  
+    .scroll-btn {
+      position: absolute;
+      top: 40%;
+      transform: translateY(-50%);
+      background: #0b6623;
+      color: white;
+      border: none;
+      border-radius: 50%;
+      width: 45px;
+      height: 45px;
+      z-index: 10;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+  
+    .scroll-btn:hover {
+      background: #006b38;
+      box-shadow: 0 0 10px rgba(0, 80, 0, 0.4);
+    }
+  
+    .left-btn {
+      left: -20px;
+    }
+  
+    .right-btn {
+      right: -20px;
+    }
+  
+    @media (max-width: 768px) {
+      .scroll-btn {
+        display: none;
+      }
+  
+      .category-item {
+        width: 160px;
+      }
+  
+      .category-img {
+        height: 150px;
+      }
+    }
+  </style>
+  
+  <!-- JS for Scroll Buttons -->
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      const carousel = document.querySelector(".category-carousel");
+      const leftBtn = document.querySelector(".left-btn");
+      const rightBtn = document.querySelector(".right-btn");
+  
+      leftBtn.addEventListener("click", () => {
+        carousel.scrollBy({ left: -300, behavior: "smooth" });
+      });
+      rightBtn.addEventListener("click", () => {
+        carousel.scrollBy({ left: 300, behavior: "smooth" });
+      });
+    });
+  </script>
+  
+  <!-- Font Awesome for Arrows -->
+  <link
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+  />
+    
+
+  <div class="mt-5">
+    <img src="{% static 'images/main.png' %}" alt="Poster" class="w-100 mt-5">
+  </div>
+  
+    
+{% endblock %}

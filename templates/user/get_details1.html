@@ -1,0 +1,1219 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block head %}
+<style>
+    :root {
+        --primary: #2e7d32;
+        --primary-dark: #1b5e20;
+        --primary-light: #4caf50;
+        --secondary: #ff9800;
+        --dark: #333333;
+        --light: #f8f9fa;
+        --gray: #6c757d;
+        --border: #e0e0e0;
+        --success: #28a745;
+        --danger: #dc3545;
+        --warning: #ffc107;
+        --shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+        --shadow-hover: 0 8px 24px rgba(0, 0, 0, 0.12);
+    }
+
+    .product-page {
+        padding-top: 2rem;
+        padding-bottom: 4rem;
+    }
+
+    /* Back Button */
+    .back-btn {
+        font-size: 1.5rem;
+        color: #555;
+        transition: color 0.3s ease;
+        padding: 0.5rem;
+        border-radius: 50%;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 3rem;
+        height: 3rem;
+    }
+
+    .back-btn:hover {
+        color: var(--primary);
+        background-color: rgba(46, 125, 50, 0.05);
+    }
+
+    /* Product Image Gallery */
+    .product-gallery {
+        position: sticky;
+        top: 2rem;
+    }
+
+    .main-image {
+        width: 100%;
+        height: 500px;
+        object-fit: contain;
+        border-radius: 12px;
+        box-shadow: var(--shadow);
+        background: white;
+        padding: 2rem;
+        transition: transform 0.3s ease;
+    }
+
+    .main-image:hover {
+        transform: scale(1.01);
+    }
+
+    .thumbnail-container {
+        display: flex;
+        gap: 1rem;
+        margin-top: 1.5rem;
+        justify-content: center;
+    }
+
+    .thumbnail {
+        width: 80px;
+        height: 80px;
+        object-fit: cover;
+        border-radius: 8px;
+        cursor: pointer;
+        border: 2px solid transparent;
+        transition: all 0.3s ease;
+        padding: 0.25rem;
+        background: white;
+    }
+
+    .thumbnail.active,
+    .thumbnail:hover {
+        border-color: var(--primary);
+        transform: translateY(-2px);
+    }
+
+    /* Product Info */
+    .product-title {
+        font-size: 2.5rem;
+        font-weight: 700;
+        color: var(--dark);
+        line-height: 1.2;
+        margin-bottom: 1rem;
+    }
+
+    .rating-container {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .rating-stars {
+        color: var(--warning);
+        font-size: 1.25rem;
+    }
+
+    .rating-text {
+        color: var(--gray);
+        font-weight: 500;
+    }
+
+    /* Pricing */
+    .current-price {
+        font-size: 3rem;
+        font-weight: 800;
+        color: var(--primary);
+        line-height: 1;
+    }
+
+    .old-price {
+        font-size: 1.5rem;
+        color: var(--gray);
+        text-decoration: line-through;
+        margin-left: 0.75rem;
+    }
+
+    .discount-badge {
+        background: var(--danger);
+        color: white;
+        padding: 0.25rem 0.75rem;
+        border-radius: 20px;
+        font-size: 0.875rem;
+        font-weight: 600;
+        margin-left: 1rem;
+        vertical-align: super;
+    }
+
+    /* Variant Selector */
+    .variant-label {
+        font-weight: 600;
+        margin-bottom: 0.75rem;
+        color: var(--dark);
+        font-size: 1.1rem;
+    }
+
+    .variant-btn {
+        padding: 0.75rem 1.5rem;
+        border: 2px solid var(--border);
+        border-radius: 8px;
+        background: white;
+        color: var(--dark);
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        min-width: 120px;
+        text-align: center;
+    }
+
+    .variant-btn:hover {
+        border-color: var(--primary);
+        transform: translateY(-2px);
+    }
+
+    .variant-btn.active {
+        border-color: var(--primary);
+        background-color: rgba(46, 125, 50, 0.05);
+        color: var(--primary);
+        font-weight: 600;
+    }
+
+    /* Quantity Selector */
+    .quantity-btn {
+        width: 45px;
+        height: 45px;
+        border: none;
+        background: #f8f9fa;
+        font-size: 1.25rem;
+        color: var(--dark);
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.2s ease;
+    }
+
+    .quantity-btn:hover {
+        background: var(--primary-light);
+        color: white;
+    }
+
+    /* Action Buttons */
+    .btn-buy-now,
+    .btn-add-cart {
+        flex: 1;
+        padding: 1.25rem 2rem;
+        font-size: 1.1rem;
+        font-weight: 600;
+        border-radius: 10px;
+        border: none;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.75rem;
+    }
+
+    .btn-buy-now {
+        background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+        color: white;
+    }
+
+    .btn-buy-now:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 8px 20px rgba(46, 125, 50, 0.3);
+    }
+
+    .btn-add-cart {
+        background: white;
+        color: var(--primary);
+        border: 2px solid var(--primary);
+    }
+
+    .btn-add-cart:hover {
+        background: var(--primary);
+        color: white;
+        transform: translateY(-3px);
+        box-shadow: 0 8px 20px rgba(46, 125, 50, 0.2);
+    }
+
+    /* Features List */
+    .features-list {
+        list-style: none;
+        padding-left: 0;
+        margin-bottom: 2rem;
+    }
+
+    .features-list li {
+        padding: 0.75rem 0;
+        border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        font-size: 1rem;
+    }
+
+    .features-list li:last-child {
+        border-bottom: none;
+    }
+
+    .feature-icon {
+        color: var(--primary);
+        font-size: 1.25rem;
+        width: 24px;
+    }
+
+    /* Product Tabs */
+    .product-tabs {
+        margin-top: 3rem;
+    }
+
+    .nav-tabs .nav-link {
+        border: none;
+        color: var(--gray);
+        font-weight: 600;
+        font-size: 1rem;
+        padding: 1rem 1.5rem;
+        border-radius: 8px 8px 0 0;
+        transition: all 0.3s ease;
+    }
+
+    .nav-tabs .nav-link:hover {
+        color: var(--primary);
+        background-color: rgba(46, 125, 50, 0.05);
+    }
+
+    .nav-tabs .nav-link.active {
+        color: var(--primary);
+        background-color: white;
+        border-bottom: 3px solid var(--primary);
+    }
+
+    .tab-content {
+        padding: 2rem;
+        background: white;
+        border-radius: 0 0 12px 12px;
+        box-shadow: var(--shadow);
+        border: 1px solid var(--border);
+        border-top: none;
+    }
+
+    /* Delivery & Payment Info */
+    .info-cards {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 1.5rem;
+        margin-top: 2rem;
+    }
+
+    .info-card {
+        background: white;
+        border-radius: 10px;
+        padding: 1.5rem;
+        box-shadow: var(--shadow);
+        border: 1px solid var(--border);
+        transition: transform 0.3s ease;
+    }
+
+    .info-card:hover {
+        transform: translateY(-5px);
+        box-shadow: var(--shadow-hover);
+    }
+
+    .info-card-icon {
+        width: 50px;
+        height: 50px;
+        background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: 1rem;
+        color: white;
+        font-size: 1.5rem;
+    }
+
+    /* Payment Methods */
+    .payment-methods {
+        display: flex;
+        gap: 1rem;
+        margin-top: 1rem;
+        flex-wrap: wrap;
+    }
+
+    .payment-method {
+        width: 60px;
+        height: 40px;
+        border: 1px solid var(--border);
+        border-radius: 6px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: white;
+        padding: 0.5rem;
+    }
+
+    /* Related Products */
+    .shadow-hover {
+        transition: all 0.3s ease;
+        border: 1px solid #e9ecef;
+    }
+    
+    .shadow-hover:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1) !important;
+        border-color: var(--primary-light);
+    }
+    
+    .product-card:hover .card-img-top {
+        transform: scale(1.05);
+    }
+    
+    .quick-view-btn {
+        opacity: 0;
+        transform: translateY(-10px);
+        transition: all 0.3s ease;
+    }
+    
+    .product-card:hover .quick-view-btn {
+        opacity: 1;
+        transform: translateY(0);
+    }
+    
+    .product-name {
+        height: 2.8em;
+        overflow: hidden;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+    }
+    
+    .empty-state {
+        padding: 3rem;
+        background: #f8f9fa;
+        border-radius: 10px;
+    }
+
+    /* Toast Notification */
+    .toast-notification {
+        position: fixed;
+        bottom: 2rem;
+        right: 2rem;
+        background: white;
+        border-radius: 10px;
+        padding: 1.25rem;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        transform: translateX(150%);
+        transition: transform 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+        z-index: 1050;
+        max-width: 350px;
+        border-left: 4px solid var(--success);
+    }
+
+    .toast-notification.show {
+        transform: translateX(0);
+    }
+
+    .toast-icon {
+        width: 40px;
+        height: 40px;
+        background: var(--success);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 1.25rem;
+    }
+
+    /* Responsive */
+    @media (max-width: 992px) {
+        .product-title {
+            font-size: 2rem;
+        }
+        .current-price {
+            font-size: 2.5rem;
+        }
+        .product-gallery {
+            position: static;
+            margin-bottom: 2rem;
+        }
+        .main-image {
+            height: 400px;
+        }
+    }
+
+    @media (max-width: 768px) {
+        .main-image {
+            height: 350px;
+        }
+        .thumbnail {
+            width: 70px;
+            height: 70px;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="product-page py-4">
+    <div class="container">
+        <!-- Back Button -->
+
+        <div class="row g-5 align-items-start">
+            <!-- Left: Image Gallery -->
+            <div class="col-lg-6 col-md-6">
+                <div class="product-gallery">
+                    <!-- Main Image -->
+                    <div class="main-image-container mb-4">
+                        <img id="mainProductImage" src="{{ get.image.url }}" alt="{{ get.name }}"
+                            class="img-fluid rounded shadow-sm w-100" 
+                            style="object-fit: contain; height: auto; max-height: 500px;">
+                    </div>
+
+                    <!-- Thumbnails -->
+                    <div class="thumbnail-container d-flex gap-2 flex-wrap">
+                        {% if get.images.all %}
+                            {% for img in get.images.all|slice:":4" %}
+                                <img src="{{ img.url }}" class="thumbnail {% if forloop.first %}active{% endif %} rounded border"
+                                    data-image="{{ img.url }}" alt="{{ get.name }}">
+                            {% endfor %}
+                        {% else %}
+                            <!-- Fallback images -->
+                            <img src=""
+                                class="thumbnail active rounded border" data-image="https://images.unsplash.com/photo-1586201375761-83865001e31c?auto=format&fit=crop&w=1000&q=80">
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right: Product Details -->
+            <div class="col-lg-6 col-md-6">
+                <!-- Stock Status -->
+                <div class="d-flex align-items-center mt-2 mb-3">
+                    {% if get.stock > 0 %}
+                    <span class="badge bg-success d-flex align-items-center p-2 fs-6 shadow-sm">
+                        <i class="bi bi-check-circle-fill me-2"></i> In Stock
+                    </span>
+                    {% else %}
+                    <span class="badge bg-danger d-flex align-items-center p-2 fs-6 shadow-sm">
+                        <i class="bi bi-x-circle-fill me-2"></i> Out of Stock
+                    </span>
+                    {% endif %}
+                </div>
+
+                <!-- Product Title & Description -->
+                <h1 class="product-title mb-2">{{ get.name }}</h1>
+                <p class="text-muted mb-3">{{ get.description }}</p>
+
+                <!-- Rating -->
+                <div class="rating-container mb-3">
+                    <div class="rating-stars text-warning">
+                        <i class="bi bi-star-fill"></i>
+                        <i class="bi bi-star-fill"></i>
+                        <i class="bi bi-star-fill"></i>
+                        <i class="bi bi-star-fill"></i>
+                        <i class="bi bi-star-half"></i>
+                    </div>
+                    <span class="rating-text text-muted small">4.5 (128 reviews)</span>
+                </div>
+
+                <!-- Pricing -->
+                {% load custom_filters %}
+<div class="pricing-container mb-3">
+  <div class="d-flex align-items-baseline flex-wrap gap-2">
+
+      <!-- 💰 Discounted (current) price — divide by 2 -->
+      <span class="current-price fs-3 fw-bold text-success">
+          ₹{{ get.price|div:2 }}
+      </span>
+
+      <!-- Show old/original price and discount badge if available -->
+      {% if get.price %}
+      <span class="old-price text-muted text-decoration-line-through">
+          ₹{{ get.price }}
+      </span>
+      <span class="discount-badge badge bg-warning text-dark">
+          Save 50%
+      </span>
+      {% endif %}
+  </div>
+
+  <p class="small text-muted mt-1">
+      Inclusive of all taxes | Free shipping on orders above ₹499
+  </p>
+</div>
+
+
+                <!-- Variants -->
+                {% if get.variants.all %}
+                <div class="variant-section mb-4">
+                    <h5 class="variant-label">Select Size / Weight</h5>
+                    <div class="variant-options d-flex flex-wrap gap-2">
+                        {% for variant in get.variants.all %}
+                        <button class="variant-btn {% if forloop.first %}active{% endif %}" 
+                                data-price="{{ variant.price }}" 
+                                data-id="{{ variant.id }}">
+                            {{ variant.name }} - ₹{{ variant.price }}
+                        </button>
+                        {% endfor %}
+                    </div>
+                </div>
+                {% endif %}
+
+                <!-- Quantity -->
+                <div class="quantity-container mb-4">
+                    <h5 class="variant-label">Quantity:</h5>
+                    <div class="quantity-selector d-flex align-items-center gap-2">
+                        <button class="quantity-btn btn btn-outline-secondary" id="decrementQty">-</button>
+                        <input type="number" class="form-control text-center" id="productQty" value="1" min="1" max="10" style="width:70px;">
+                        <button class="quantity-btn btn btn-outline-secondary" id="incrementQty">+</button>
+                    </div>
+                    <small class="text-muted">Max 10 units per order</small>
+                </div>
+
+                <!-- Action Buttons -->
+                
+                
+                    <div class="action-buttons d-flex gap-3 mb-4">
+                        {% if get.stock > 0 %}
+                    <button class="btn-buy-now" id="buyNowBtn">
+                        <i class="bi bi-lightning-fill"></i> BUY NOW
+                    </button>
+                    <button class="btn-add-cart" id="addToCartBtn">
+                        <i class="bi bi-cart-plus"></i> ADD TO CART
+                    </button>
+                    {% else %}
+                <div class="text-danger">
+                    <h1>Out of stock</h1>
+                </div>
+                {% endif %}
+                </div>
+                
+                    
+                
+
+                <!-- Key Features -->
+                <div class="mb-4">
+                    <h5 class="variant-label">Key Features</h5>
+                    <ul class="features-list">
+                        <li>
+                            <i class="bi bi-check-circle feature-icon"></i>
+                            <span>100% Natural & Organic, No Preservatives</span>
+                        </li>
+                        <li>
+                            <i class="bi bi-check-circle feature-icon"></i>
+                            <span>{{get.name}}, Handpicked Selection</span>
+                        </li>
+                        <li>
+                            <i class="bi bi-check-circle feature-icon"></i>
+                            <span>Rich in Vitamin E, Protein & Healthy Fats</span>
+                        </li>
+                        <li>
+                            <i class="bi bi-check-circle feature-icon"></i>
+                            <span>Vacuum Packed for Freshness & Long Shelf Life</span>
+                        </li>
+                        <li>
+                            <i class="bi bi-check-circle feature-icon"></i>
+                            <span>Certified Quality & Food Safety Standards</span>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- Delivery & Payment Info Cards -->
+                <div class="info-cards">
+                    <div class="info-card">
+                        <div class="info-card-icon">
+                            <i class="bi bi-truck"></i>
+                        </div>
+                        <h5>Fast Delivery</h5>
+                        <p>Free delivery on orders above ₹499. Delivery within 2-4 business days.</p>
+                    </div>
+
+                    <div class="info-card">
+                        <div class="info-card-icon">
+                            <i class="bi bi-shield-check"></i>
+                        </div>
+                        <h5>Quality Guarantee</h5>
+                        <p>100% satisfaction guarantee. Return within 7 days if not satisfied.</p>
+                    </div>
+
+                    <div class="info-card">
+                        <div class="info-card-icon">
+                            <i class="bi bi-credit-card"></i>
+                        </div>
+                        <h5>Secure Payment</h5>
+                        <p>Pay with confidence using our secure payment gateway.</p>
+                        <div class="payment-methods">
+                            <div class="payment-method">
+                                <i class="fab fa-cc-visa text-primary"></i>
+                            </div>
+                            <div class="payment-method">
+                                <i class="fab fa-cc-mastercard text-danger"></i>
+                            </div>
+                            <div class="payment-method">
+                                <i class="fab fa-cc-amex text-info"></i>
+                            </div>
+                            <div class="payment-method">
+                                <i class="fab fa-cc-paypal text-primary"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Product Tabs -->
+        <div class="product-tabs">
+            <ul class="nav nav-tabs" id="productTab" role="tablist">
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link active" id="description-tab" data-bs-toggle="tab"
+                        data-bs-target="#description" type="button" role="tab">Description</button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="nutrition-tab" data-bs-toggle="tab" data-bs-target="#nutrition"
+                        type="button" role="tab">Nutrition Facts</button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="reviews-tab" data-bs-toggle="tab" data-bs-target="#reviews"
+                        type="button" role="tab">Customer Reviews</button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="faq-tab" data-bs-toggle="tab" data-bs-target="#faq" type="button"
+                        role="tab">FAQs</button>
+                </li>
+            </ul>
+            <div class="tab-content" id="productTabContent">
+                <!-- Description Tab -->
+                <div class="tab-pane fade show active" id="description" role="tabpanel">
+                    <h4 class="mb-3">About This Product</h4>
+                    <p class="text-muted" style="line-height: 1.8;">
+                        {{ get.full_description|default:"Our premium California almonds are carefully selected from the finest orchards, ensuring superior quality and taste. Each almond is handpicked, sun-dried, and vacuum-packed to preserve natural flavors, nutrients, and freshness. Rich in essential vitamins, minerals, and antioxidants, these almonds are perfect for healthy snacking, baking, or as nutritional supplements." }}
+                    </p>
+                    <div class="row mt-4">
+                        <div class="col-md-6">
+                            <h5 class="mb-3">Storage Instructions</h5>
+                            <ul class="text-muted">
+                                <li>Store in a cool, dry place away from direct sunlight</li>
+                                <li>Keep in an airtight container after opening</li>
+                                <li>Refrigerate for extended shelf life</li>
+                                <li>Consume within 6 months for best quality</li>
+                            </ul>
+                        </div>
+                        <div class="col-md-6">
+                            <h5 class="mb-3">Best Uses</h5>
+                            <ul class="text-muted">
+                                <li>Healthy snacking between meals</li>
+                                <li>Add to breakfast cereals and smoothies</li>
+                                <li>Perfect for baking and dessert preparations</li>
+                                <li>Ideal for gifting during festive seasons</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Nutrition Facts Tab -->
+                <div class="tab-pane fade" id="nutrition" role="tabpanel">
+                    <h4 class="mb-3">Nutritional Information</h4>
+                    <p class="text-muted mb-4">Per 100g serving</p>
+                    <div class="table-responsive">
+                        <table class="table table-bordered">
+                            <tbody>
+                                <tr>
+                                    <td><strong>Energy</strong></td>
+                                    <td>579 kcal</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Protein</strong></td>
+                                    <td>21g</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Carbohydrates</strong></td>
+                                    <td>22g</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Sugar</strong></td>
+                                    <td>4.4g (Natural)</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Dietary Fiber</strong></td>
+                                    <td>12.5g</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Fat</strong></td>
+                                    <td>50g</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Saturated Fat</strong></td>
+                                    <td>3.8g</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Vitamin E</strong></td>
+                                    <td>25.6mg (171% DV)</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Magnesium</strong></td>
+                                    <td>270mg (68% DV)</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Reviews Tab -->
+                <div class="tab-pane fade" id="reviews" role="tabpanel">
+                    <h4 class="mb-3">Customer Reviews</h4>
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="text-center p-4 bg-light rounded">
+                                <h2 class="text-primary">4.5/5</h2>
+                                <div class="rating-stars fs-3 mb-2">
+                                    <i class="bi bi-star-fill"></i>
+                                    <i class="bi bi-star-fill"></i>
+                                    <i class="bi bi-star-fill"></i>
+                                    <i class="bi bi-star-fill"></i>
+                                    <i class="bi bi-star-half"></i>
+                                </div>
+                                <p class="text-muted">128 ratings</p>
+                            </div>
+                        </div>
+                        <div class="col-md-8">
+                            <div class="review-list">
+                                <!-- Sample Reviews -->
+                                <div class="review-item border-bottom pb-3 mb-3">
+                                    <div class="d-flex justify-content-between">
+                                        <h6 class="mb-1">Excellent Quality</h6>
+                                        <small class="text-muted">2 days ago</small>
+                                    </div>
+                                    <div class="rating-stars mb-2">
+                                        <i class="bi bi-star-fill"></i>
+                                        <i class="bi bi-star-fill"></i>
+                                        <i class="bi bi-star-fill"></i>
+                                        <i class="bi bi-star-fill"></i>
+                                        <i class="bi bi-star-fill"></i>
+                                    </div>
+                                    <p class="text-muted mb-1">Fresh and premium quality almonds. Will definitely purchase again!</p>
+                                    <small class="text-muted">- Rajesh Kumar</small>
+                                </div>
+                                <div class="review-item border-bottom pb-3 mb-3">
+                                    <div class="d-flex justify-content-between">
+                                        <h6 class="mb-1">Good Value</h6>
+                                        <small class="text-muted">1 week ago</small>
+                                    </div>
+                                    <div class="rating-stars mb-2">
+                                        <i class="bi bi-star-fill"></i>
+                                        <i class="bi bi-star-fill"></i>
+                                        <i class="bi bi-star-fill"></i>
+                                        <i class="bi bi-star-fill"></i>
+                                        <i class="bi bi-star"></i>
+                                    </div>
+                                    <p class="text-muted mb-1">Fresh and tasty. Packaging could be better, but overall satisfied.</p>
+                                    <small class="text-muted">- Priya Sharma</small>
+                                </div>
+                                <div class="review-item pb-3 mb-3">
+                                    <div class="d-flex justify-content-between">
+                                        <h6 class="mb-1">Best Almonds Ever!</h6>
+                                        <small class="text-muted">2 weeks ago</small>
+                                    </div>
+                                    <div class="rating-stars mb-2">
+                                        <i class="bi bi-star-fill"></i>
+                                        <i class="bi bi-star-fill"></i>
+                                        <i class="bi bi-star-fill"></i>
+                                        <i class="bi bi-star-fill"></i>
+                                        <i class="bi bi-star-fill"></i>
+                                    </div>
+                                    <p class="text-muted mb-1">Perfectly crunchy and fresh. Love the quality!</p>
+                                    <small class="text-muted">- Amit Patel</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- FAQ Tab -->
+                <div class="tab-pane fade" id="faq" role="tabpanel">
+                    <h4 class="mb-3">Frequently Asked Questions</h4>
+                    <div class="accordion" id="faqAccordion">
+                        <div class="accordion-item">
+                            <h2 class="accordion-header">
+                                <button class="accordion-button" type="button" data-bs-toggle="collapse"
+                                    data-bs-target="#faq1">
+                                    What is the shelf life of these almonds?
+                                </button>
+                            </h2>
+                            <div id="faq1" class="accordion-collapse collapse show" data-bs-parent="#faqAccordion">
+                                <div class="accordion-body">
+                                    Our almonds have a shelf life of 6 months when stored in a cool, dry place. For extended freshness, refrigerate after opening. Vacuum packing ensures they stay fresh longer.
+                                </div>
+                            </div>
+                        </div>
+                        <div class="accordion-item">
+                            <h2 class="accordion-header">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                                    data-bs-target="#faq2">
+                                    Are these preservative-free?
+                                </button>
+                            </h2>
+                            <div id="faq2" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                                <div class="accordion-body">
+                                    Yes, all our almonds are 100% natural with no added preservatives, colors, or artificial flavors. They are sun-dried naturally to preserve nutrients.
+                                </div>
+                            </div>
+                        </div>
+                        <div class="accordion-item">
+                            <h2 class="accordion-header">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                                    data-bs-target="#faq3">
+                                    What is your return policy?
+                                </button>
+                            </h2>
+                            <div id="faq3" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                                <div class="accordion-body">
+                                    We offer a 7-day return policy if you're not satisfied with the product. The product must be unopened and in original condition. For quality issues, we offer instant replacement.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Related Products Section -->
+        <div class="mt-5 pt-4">
+            <h3 class="mb-4 fw-bold text-dark">Related Products</h3>
+            <div class="row g-4">
+                {% for i in category %}
+                <div class="col-xl-3 col-lg-4 col-md-6 col-sm-6">
+                    <div class="card product-card h-100 border-0 shadow-hover">
+                        <!-- Product Image with Hover Effect -->
+                        <div class="position-relative overflow-hidden" style="height: 220px; background: #f8f9fa;">
+                            <img src="{{ i.image.url }}" class="card-img-top h-100" alt="{{ i.name }}" 
+                                 style="object-fit: cover; transition: transform 0.3s ease;">
+                            <!-- Quick View Button -->
+                            <div class="position-absolute top-0 end-0 m-2">
+                                <button class="btn btn-light btn-sm rounded-circle shadow-sm quick-view-btn" 
+                                        data-product-id="{{ i.id }}">
+                                    <i class="bi bi-eye"></i>
+                                </button>
+                            </div>
+                            <!-- Discount Badge -->
+                            {% if i.discount_percentage %}
+                            <div class="position-absolute top-0 start-0 m-2">
+                                <span class="badge bg-danger rounded-pill px-2 py-1">
+                                    -{{ i.discount_percentage }}%
+                                </span>
+                            </div>
+                            {% endif %}
+                        </div>
+                        
+                        <!-- Card Body -->
+                        <div class="card-body d-flex flex-column p-3">
+                            <!-- Product Name -->
+                            <h6 class="card-title fw-semibold text-dark mb-2 product-name" style="font-size: 0.95rem;">
+                                {{ i.name|truncatechars:40 }}
+                            </h6>
+                            
+                            <!-- Rating -->
+                            <div class="d-flex align-items-center mb-2">
+                                <div class="rating-stars small me-2">
+                                    {% with rating=i.rating|default:4 %}
+                                        {% for star in "12345"|make_list %}
+                                            {% if forloop.counter <= rating %}
+                                                <i class="bi bi-star-fill text-warning"></i>
+                                            {% else %}
+                                                <i class="bi bi-star text-warning"></i>
+                                            {% endif %}
+                                        {% endfor %}
+                                    {% endwith %}
+                                </div>
+                                <small class="text-muted">({{ i.review_count|default:"24" }})</small>
+                            </div>
+                            
+                            <!-- Price -->
+
+                            
+                            <!-- Action Buttons -->
+                            <div class="d-flex gap-2 mt-auto">
+                                <a href="{% url 'shop:product' i.id %}" 
+                                   class="btn btn-outline-primary btn-sm flex-grow-1 d-flex align-items-center justify-content-center">
+                                    <i class="bi bi-eye me-1"></i> View
+                                </a>
+                                <button class="btn btn-success btn-sm add-to-cart-related" 
+                                        data-product-id="{{ i.id }}"
+                                        {% if i.stock_quantity <= 0 %}disabled{% endif %}>
+                                    <i class="bi bi-cart-plus"></i>
+                                </button>
+                                <button class="btn btn-outline-secondary btn-sm wishlist-btn" 
+                                        data-product-id="{{ i.id }}">
+                                    <i class="bi bi-heart"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% empty %}
+                <div class="col-12 text-center py-5">
+                    <div class="empty-state">
+                        <i class="bi bi-box-seam display-1 text-muted mb-3"></i>
+                        <h5 class="text-muted mb-2">No Related Products Found</h5>
+                        <p class="text-muted">Check back soon for new additions!</p>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Toast Notification -->
+<div class="toast-notification" id="successToast">
+    <div class="toast-icon">
+        <i class="bi bi-check-lg"></i>
+    </div>
+    <div class="toast-content">
+        <h6 id="toastTitle">Added to Cart!</h6>
+        <p id="toastMessage">Product has been added to your shopping cart.</p>
+    </div>
+</div>
+
+<!-- Product Quick View Modal -->
+<div class="modal fade" id="quickViewModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header border-0">
+                <h5 class="modal-title">Quick View</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <!-- Content loaded dynamically -->
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Thumbnail Gallery
+        const thumbnails = document.querySelectorAll('.thumbnail');
+        const mainImage = document.getElementById('mainProductImage');
+        
+        thumbnails.forEach(thumb => {
+            thumb.addEventListener('click', function() {
+                const newImage = this.getAttribute('data-image');
+                if (newImage) {
+                    mainImage.src = newImage;
+                    thumbnails.forEach(t => t.classList.remove('active'));
+                    this.classList.add('active');
+                }
+            });
+        });
+
+        // Variant Selection
+        const variantButtons = document.querySelectorAll('.variant-btn');
+        const currentPriceElement = document.querySelector('.current-price');
+        
+        if (variantButtons.length > 0) {
+            variantButtons.forEach(btn => {
+                btn.addEventListener('click', function() {
+                    variantButtons.forEach(b => b.classList.remove('active'));
+                    this.classList.add('active');
+                    
+                    const variantPrice = this.getAttribute('data-price');
+                    if (variantPrice) {
+                        currentPriceElement.textContent = `₹${variantPrice}`;
+                    }
+                });
+            });
+        }
+
+        // Quantity Selector
+        const quantityInput = document.getElementById('productQty');
+        const decrementBtn = document.getElementById('decrementQty');
+        const incrementBtn = document.getElementById('incrementQty');
+        
+        if (decrementBtn && incrementBtn && quantityInput) {
+            decrementBtn.addEventListener('click', function() {
+                let currentValue = parseInt(quantityInput.value) || 1;
+                if (currentValue > 1) {
+                    quantityInput.value = currentValue - 1;
+                }
+            });
+            
+            incrementBtn.addEventListener('click', function() {
+                let currentValue = parseInt(quantityInput.value) || 1;
+                if (currentValue < 10) {
+                    quantityInput.value = currentValue + 1;
+                }
+            });
+            
+            quantityInput.addEventListener('change', function() {
+                let value = parseInt(this.value) || 1;
+                if (value < 1) value = 1;
+                if (value > 10) value = 10;
+                this.value = value;
+            });
+        }
+
+        // Toast Notification Function
+        function showToast(title, message, duration = 3000) {
+            const toast = document.getElementById('successToast');
+            const toastTitle = document.getElementById('toastTitle');
+            const toastMessage = document.getElementById('toastMessage');
+            
+            if (toast && toastTitle && toastMessage) {
+                toastTitle.textContent = title;
+                toastMessage.textContent = message;
+                toast.classList.add('show');
+                
+                setTimeout(() => {
+                    toast.classList.remove('show');
+                }, duration);
+            }
+        }
+
+        // Add to Cart - Main Product
+        const addToCartBtn = document.getElementById('addToCartBtn');
+        const buyNowBtn = document.getElementById('buyNowBtn');
+        
+        if (addToCartBtn) {
+            addToCartBtn.addEventListener('click', function() {
+                const selectedVariant = document.querySelector('.variant-btn.active');
+                const variantId = selectedVariant ? selectedVariant.getAttribute('data-id') : null;
+                const quantity = quantityInput ? quantityInput.value : 1;
+                const price = selectedVariant ? selectedVariant.getAttribute('data-price') : '{{ get.price }}';
+                const productName = '{{ get.name }}';
+                
+                showToast('Added to Cart!', `${quantity} × ${productName} added to your cart.`);
+                
+                // AJAX call to add to cart
+                console.log('Adding to cart:', {
+                    productId: '{{ get.id }}',
+                    variantId: variantId,
+                    quantity: quantity,
+                    price: price
+                });
+            });
+        }
+
+        // Buy Now
+        if (buyNowBtn) {
+            buyNowBtn.addEventListener('click', function() {
+                const selectedVariant = document.querySelector('.variant-btn.active');
+                const quantity = quantityInput ? quantityInput.value : 1;
+                
+                showToast('Processing Order!', 'Redirecting to checkout...', 2000);
+                
+                setTimeout(() => {
+                    // Redirect to checkout
+                    // window.location.href = '/checkout/?product={{ get.id }}&quantity=' + quantity;
+                    console.log('Proceeding to checkout');
+                }, 1500);
+            });
+        }
+
+        // Related Products Add to Cart
+        document.querySelectorAll('.add-to-cart-related').forEach(btn => {
+            btn.addEventListener('click', function() {
+                if (this.disabled) return;
+                
+                const productId = this.getAttribute('data-product-id');
+                const productName = this.closest('.card-body').querySelector('.product-name').textContent;
+                
+                const originalHTML = this.innerHTML;
+                this.innerHTML = '<i class="bi bi-check"></i>';
+                this.disabled = true;
+                
+                showToast('Added to Cart!', `${productName} added to your cart.`);
+                
+                setTimeout(() => {
+                    this.innerHTML = originalHTML;
+                    this.disabled = false;
+                }, 1000);
+                
+                console.log('Adding related product to cart:', productId);
+            });
+        });
+
+        // Wishlist Toggle
+        document.querySelectorAll('.wishlist-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const icon = this.querySelector('i');
+                const productName = this.closest('.card-body').querySelector('.product-name').textContent;
+                
+                if (icon.classList.contains('bi-heart')) {
+                    icon.classList.remove('bi-heart');
+                    icon.classList.add('bi-heart-fill', 'text-danger');
+                    showToast('Added to Wishlist!', `${productName} added to wishlist.`);
+                } else {
+                    icon.classList.remove('bi-heart-fill', 'text-danger');
+                    icon.classList.add('bi-heart');
+                    showToast('Removed from Wishlist!', `${productName} removed from wishlist.`);
+                }
+            });
+        });
+
+        // Quick View Modal
+        const quickViewModal = new bootstrap.Modal(document.getElementById('quickViewModal'));
+        document.querySelectorAll('.quick-view-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const productId = this.getAttribute('data-product-id');
+                
+                // Load quick view content
+                const modalBody = document.querySelector('#quickViewModal .modal-body');
+                modalBody.innerHTML = `
+                    <div class="text-center py-5">
+                        <div class="spinner-border text-success" role="status">
+                            <span class="visually-hidden">Loading...</span>
+                        </div>
+                    </div>
+                `;
+                
+                quickViewModal.show();
+                
+                // Simulate AJAX call
+                setTimeout(() => {
+                    modalBody.innerHTML = `
+                        <div class="row">
+                            <div class="col-md-6">
+                                <img src="https://images.unsplash.com/photo-1586201375761-83865001e31c?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" 
+                                     class="img-fluid rounded" alt="Product Quick View">
+                            </div>
+                            <div class="col-md-6">
+                                <h5>Product ${productId}</h5>
+                                <div class="rating-stars mb-2">
+                                    <i class="bi bi-star-fill text-warning"></i>
+                                    <i class="bi bi-star-fill text-warning"></i>
+                                    <i class="bi bi-star-fill text-warning"></i>
+                                    <i class="bi bi-star-fill text-warning"></i>
+                                    <i class="bi bi-star text-warning"></i>
+                                    <span class="ms-2 text-muted">(24 reviews)</span>
+                                </div>
+                                <h4 class="text-success fw-bold mb-3">₹599</h4>
+                                <p class="text-muted mb-3">Premium quality product with amazing features.</p>
+                                <div class="d-flex gap-2 mb-3">
+                                    <span class="badge bg-success">In Stock</span>
+                                    <span class="badge bg-info">Free Shipping</span>
+                                </div>
+                                <div class="d-flex gap-2">
+                                    <button class="btn btn-success flex-grow-1">Add to Cart</button>
+                                    <button class="btn btn-primary">Buy Now</button>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                }, 1000);
+            });
+        });
+
+        // Bootstrap Tab Activation
+        const tabTriggers = [].slice.call(document.querySelectorAll('[data-bs-toggle="tab"]'));
+        tabTriggers.map(function (triggerEl) {
+            return new bootstrap.Tab(triggerEl);
+        });
+    });
+</script>
+
+
+
+
+{% endblock %}
