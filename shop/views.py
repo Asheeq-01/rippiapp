@@ -32,15 +32,25 @@ class Product(View):
 from django.shortcuts import get_object_or_404, render
 
 
+from random import sample
+
 class Get_product_details(View):
     def get(self, request, i):
-        b = get_object_or_404(Product_model, id=i)
-        c = Category_model.objects.all()
+        product = get_object_or_404(Product_model, id=i)
+
+        related = Product_model.objects.filter(
+            category=product.category,
+            available=True
+        ).exclude(id=product.id)
+
+        related_list = list(related)
+        random_products = sample(related_list, min(len(related_list), 6))
+
         return render(request, 'user/get_details.html', {
-            'get': b,
-            'category': c,
-            
+            'get': product,
+            'random_products': random_products
         })
+
 
     
     

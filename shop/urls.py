@@ -12,6 +12,6 @@ urlpatterns = [
     path('logout/', views.Logout.as_view(), name='logout'),
     path('product/<int:i>',views.Product.as_view(),name="product"),
     path('get-product-details/<int:i>/',views.Get_product_details.as_view(),name="get_product_details"),
-    path('get-product-details2/<int:i>/',views.Get_product_details2.as_view(),name="get_product_details2"),
+   
     path('admin-home/', views.Admin_home.as_view(), name='admin-home'),
 ]
